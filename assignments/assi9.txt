@@ -1,0 +1,185 @@
+mysql> use kharghar;
+Database changed
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.021 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2001 | Hoffman  | London   |    100 | 1001 | 0.12 | 1990-10-03 |
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2006 | Clemens  | London   |    100 | 1001 | 0.12 | 1990-10-07 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+7 rows in set (0.008 sec)
+
+mysql> select orders.onum , customers.cname from orders
+    -> join customers
+    -> on orders.cnum = customers.cnum;
++------+----------+
+| onum | cname    |
++------+----------+
+| 3001 | Cisneros |
+| 3003 | Hoffman  |
+| 3002 | Pereira  |
+| 3005 | Liu      |
+| 3006 | Cisneros |
+| 3009 | Giovanni |
+| 3007 | Grass    |
+| 3008 | Clemens  |
+| 3010 | Grass    |
+| 3011 | Clemens  |
++------+----------+
+10 rows in set (0.098 sec)
+
+mysql> select orders.onum , customers.cname from customers
+    -> join orders
+    -> on orders.cnum = customers.cnum;
++------+----------+
+| onum | cname    |
++------+----------+
+| 3001 | Cisneros |
+| 3003 | Hoffman  |
+| 3002 | Pereira  |
+| 3005 | Liu      |
+| 3006 | Cisneros |
+| 3009 | Giovanni |
+| 3007 | Grass    |
+| 3008 | Clemens  |
+| 3010 | Grass    |
+| 3011 | Clemens  |
++------+----------+
+10 rows in set (0.074 sec)
+
+mysql> select orders.onum , customers.cname from orders
+    -> join customers
+    -> on customers.cnum = orders.cnum;
++------+----------+
+| onum | cname    |
++------+----------+
+| 3001 | Cisneros |
+| 3003 | Hoffman  |
+| 3002 | Pereira  |
+| 3005 | Liu      |
+| 3006 | Cisneros |
+| 3009 | Giovanni |
+| 3007 | Grass    |
+| 3008 | Clemens  |
+| 3010 | Grass    |
+| 3011 | Clemens  |
++------+----------+
+10 rows in set (0.007 sec)
+
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| Snum | Sname   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1004 | Motika  | London    | 0.11 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
+| 1003 | Axelrod | New York  | 0.10 |
++------+---------+-----------+------+
+5 rows in set (0.077 sec)
+
+mysql> select salespeople.sname , customers.cname , order.onum from orders
+    -> join customers
+    -> on customers.cnum = orders.cnum
+    -> join salespeople
+    -> on orders.snum = salespeople.snum;
+ERROR 1054 (42S22): Unknown column 'order.onum' in 'field list'
+mysql> select salespeople.sname , customers.cname , orders.onum from orders
+    -> join customers
+    -> on customers.cnum = orders.cnum
+    -> join salespeople
+    -> on orders.snum = salespeople.snum;
++---------+----------+------+
+| sname   | cname    | onum |
++---------+----------+------+
+| Peel    | Hoffman  | 3003 |
+| Axelrod | Giovanni | 3009 |
+| Serres  | Liu      | 3005 |
+| Serres  | Grass    | 3010 |
+| Serres  | Grass    | 3007 |
+| Peel    | Clemens  | 3011 |
+| Peel    | Clemens  | 3008 |
+| Rifkin  | Cisneros | 3006 |
+| Rifkin  | Cisneros | 3001 |
+| Motika  | Pereira  | 3002 |
++---------+----------+------+
+10 rows in set (0.087 sec)
+
+mysql> select customers.cname , salespeople.sname ,salespeople.comm
+    -> from salespeople
+    -> join customers
+    -> on salespeople.snum =  customers.snum
+    -> where comm > .12;
+ERROR 1052 (23000): Column 'comm' in where clause is ambiguous
+mysql> select customers.cname , salespeople.sname ,salespeople.comm
+    -> from salespeople
+    -> join customers
+    -> on salespeople.snum =  customers.snum
+    -> where salespeople.comm > .12;
++----------+--------+------+
+| cname    | sname  | comm |
++----------+--------+------+
+| Liu      | Serres | 0.13 |
+| Grass    | Serres | 0.13 |
+| Cisneros | Rifkin | 0.15 |
++----------+--------+------+
+3 rows in set (0.105 sec)
+
+mysql> select orders.amt* customers.comm ,customers.rating from customers
+    -> join orders
+    -> on orders.cnum = customers.cnum
+    -> where customers.rating > 100;
++----------------------------+--------+
+| orders.amt* customers.comm | rating |
++----------------------------+--------+
+|         2.0559000476062295 |    300 |
+|           619.254009596094 |    200 |
+|         120.79760310521124 |    300 |
+|         222.71988929162035 |    200 |
+|         11.362500451505184 |    300 |
+|          196.4925004836914 |    300 |
++----------------------------+--------+
+6 rows in set (0.119 sec)
+
+mysql> SELECT orders.onum, orders.amt * salespeople.comm AS commission
+    -> FROM orders
+    -> JOIN customers
+    -> ON orders.cnum = customers.cnum
+    -> JOIN salespeople
+    -> ON orders.snum = salespeople.snum
+    -> WHERE customers.rating > 100;
++------+------------+
+| onum | commission |
++------+------------+
+| 3010 |     170.29 |
+| 3007 |       9.85 |
+| 3005 |     670.86 |
+| 3006 |     164.72 |
+| 3001 |       2.80 |
+| 3009 |     171.32 |
++------+------------+
+6 rows in set (0.042 sec)
+
+mysql>

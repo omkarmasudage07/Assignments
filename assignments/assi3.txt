@@ -1,0 +1,6 @@
+1) Does ANSI recognize the data type DATE? 
+-> YYYY-MM-DD 
+
+
+2) Which subdivision of SQL is used to insert values in tables? 
+-> Data Manipulation Language(DML).

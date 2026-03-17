@@ -1,0 +1,134 @@
+mysql> use kharghar
+Database changed
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.088 sec)
+
+mysql> select count(odate) from orders
+    -> where odate = '1990-10-03';
++--------------+
+| count(odate) |
++--------------+
+|            5 |
++--------------+
+1 row in set (0.132 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2001 | Hoffman  | London   |    100 | 1001 | 0.12 | 1990-10-03 |
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2006 | Clemens  | London   |    100 | 1001 | 0.12 | 1990-10-07 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+7 rows in set (0.079 sec)
+
+mysql> select count(city) from customers
+    -> where city != null;
++-------------+
+| count(city) |
++-------------+
+|           0 |
++-------------+
+1 row in set (0.007 sec)
+
+mysql> select count(distinct city) from customers;
++----------------------+
+| count(distinct city) |
++----------------------+
+|                    4 |
++----------------------+
+1 row in set (0.109 sec)
+
+mysql> select cnum , min(amt)
+    -> from orders
+    -> group by cnum;
++------+----------+
+| cnum | min(amt) |
++------+----------+
+| 2008 |    18.69 |
+| 2001 |   767.19 |
+| 2007 |  1900.10 |
+| 2003 |  5160.45 |
+| 2002 |  1713.23 |
+| 2004 |    75.75 |
+| 2006 |  4723.00 |
++------+----------+
+7 rows in set (0.036 sec)
+
+mysql> select * from
+    -> customers
+    -> where cname like 'g%'
+    -> order by cname
+    -> limit = 1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 1' at line 5
+mysql> select * from
+    -> customers
+    -> where cname like 'g%'
+    -> order by cname
+    -> limit 1;
++------+----------+------+--------+------+------+------------+
+| Cnum | Cname    | City | Rating | Snum | comm | Odate      |
++------+----------+------+--------+------+------+------------+
+| 2002 | Giovanni | Rome |    200 | 1003 | 0.13 | 1990-10-04 |
++------+----------+------+--------+------+------+------------+
+1 row in set (0.031 sec)
+
+mysql> select city ,max(rating) from customers
+    -> group by city;
++----------+-------------+
+| city     | max(rating) |
++----------+-------------+
+| London   |         100 |
+| Rome     |         200 |
+| San Jose |         300 |
+| Berlin   |         300 |
++----------+-------------+
+4 rows in set (0.073 sec)
+
+mysql> select onum , count(distinct odate) from orders
+    -> group by onum;
++------+-----------------------+
+| onum | count(distinct odate) |
++------+-----------------------+
+| 3001 |                     1 |
+| 3002 |                     1 |
+| 3003 |                     1 |
+| 3005 |                     1 |
+| 3006 |                     1 |
+| 3007 |                     1 |
+| 3008 |                     1 |
+| 3009 |                     1 |
+| 3010 |                     1 |
+| 3011 |                     1 |
++------+-----------------------+
+10 rows in set (0.032 sec)
+
+mysql> select odate , count(distinct snum) from orders
+    -> group by odate;
++------------+----------------------+
+| odate      | count(distinct snum) |
++------------+----------------------+
+| 1990-10-03 |                    4 |
+| 1990-10-04 |                    2 |
+| 1990-10-05 |                    1 |
+| 1990-10-06 |                    2 |
++------------+----------------------+
+4 rows in set (0.017 sec)

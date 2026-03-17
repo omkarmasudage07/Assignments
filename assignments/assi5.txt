@@ -1,0 +1,157 @@
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.443 sec)
+
+mysql> select * from orders
+    -> where amt > 1000;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+7 rows in set (0.123 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2001 | Hoffman  | London   |    100 | 1001 | 0.12 | 1990-10-03 |
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2006 | Clemens  | London   |    100 | 1001 | 0.12 | 1990-10-07 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+7 rows in set (0.055 sec)
+
+mysql> select *  from customers
+    -> ^C
+mysql> select cnames , city from customers
+    -> where city = 'london' or comm > .10;
+ERROR 1054 (42S22): Unknown column 'cnames' in 'field list'
+mysql> select cnames , city from customers
+    -> where city = 'london' or comm > .10;^C
+mysql> select cname , city from customers
+    -> where city = 'london' or comm > .10;
++----------+----------+
+| cname    | city     |
++----------+----------+
+| Hoffman  | London   |
+| Giovanni | Rome     |
+| Liu      | San Jose |
+| Grass    | Berlin   |
+| Clemens  | London   |
+| Cisneros | San Jose |
+| Pereira  | Rome     |
++----------+----------+
+7 rows in set (0.088 sec)
+
+mysql> select * from customers
+    -> where rating > 100 or city = 'rome';
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+5 rows in set (0.067 sec)
+
+mysql> select * from Orders
+    -> where(amt < 1000 or
+    -> not(odate = '19-10-03'
+    -> and cnum > 2003));
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.087 sec)
+
+mysql> select * from orders
+    -> where not ((odate = '1990 - 10 -03' or snum > 1006) and amt >= 1500);
+ERROR 1525 (HY000): Incorrect DATE value: '1990 - 10 -03'
+mysql> where not ((odate = '1990-10-03' or snum > 1006) and amt >= 1500);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where not ((odate = '1990-10-03' or snum > 1006) and amt >= 1500)' at line 1
+mysql> select * from orders
+    -> where not ((odate = '1990-10-03' or snum > 1006) and amt >= 1500);
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+8 rows in set (0.012 sec)
+
+mysql> select snum , sname , city , comm from customers
+    -> where (comm>.12 or comm <.14);
+ERROR 1054 (42S22): Unknown column 'sname' in 'field list'
+mysql> select cnum , cname , city , comm from customers
+    -> where (comm>.12 or comm <.14);
++------+----------+----------+------+
+| cnum | cname    | city     | comm |
++------+----------+----------+------+
+| 2001 | Hoffman  | London   | 0.12 |
+| 2002 | Giovanni | Rome     | 0.13 |
+| 2003 | Liu      | San Jose | 0.12 |
+| 2004 | Grass    | Berlin   | 0.15 |
+| 2006 | Clemens  | London   | 0.12 |
+| 2008 | Cisneros | San Jose | 0.11 |
+| 2007 | Pereira  | Rome     | 0.14 |
++------+----------+----------+------+
+7 rows in set (0.006 sec)
+
+mysql> select snum , sname , city , comm from customers;
+ERROR 1054 (42S22): Unknown column 'sname' in 'field list'
+mysql> select cnum , cname , city , comm from customers;
++------+----------+----------+------+
+| cnum | cname    | city     | comm |
++------+----------+----------+------+
+| 2001 | Hoffman  | London   | 0.12 |
+| 2002 | Giovanni | Rome     | 0.13 |
+| 2003 | Liu      | San Jose | 0.12 |
+| 2004 | Grass    | Berlin   | 0.15 |
+| 2006 | Clemens  | London   | 0.12 |
+| 2008 | Cisneros | San Jose | 0.11 |
+| 2007 | Pereira  | Rome     | 0.14 |
++------+----------+----------+------+
+7 rows in set (0.004 sec)
+
+mysql>

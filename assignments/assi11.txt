@@ -1,0 +1,95 @@
+
+mysql> use kharghar
+Database changed
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| Snum | Sname   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1004 | Motika  | London    | 0.11 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
+| 1003 | Axelrod | New York  | 0.10 |
++------+---------+-----------+------+
+5 rows in set (0.357 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2001 | Hoffman  | London   |    100 | 1001 | 0.12 | 1990-10-03 |
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2006 | Clemens  | London   |    100 | 1001 | 0.12 | 1990-10-07 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+7 rows in set (0.078 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.083 sec)
+
+mysql> select * from customers
+    -> where cnum =
+    -> (select cnum from customers
+    -> where cname = 'Cisneros');
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
++------+----------+----------+--------+------+------+------------+
+1 row in set (0.150 sec)
+
+mysql> select customers.cname , customers.rating from customers
+    -> join orders
+    -> on customeres.cnum = orders.cnum
+    -> where orders.amt >
+    -> (select avg(amt) from orders;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 5
+mysql> select customers.cname , customers.rating from customers
+    -> join orders
+    -> on customers.cnum = orders.cnum
+    ->
+    -> where orders.amt >
+    -> (select avg(amt) from orders;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 6
+mysql> select customers.cname , customers.rating from customers
+    -> join orders
+    -> on customers.cnum = orders.cnum
+    -> where orders.amt >
+    -> (select avg(amt) from orders);
++---------+--------+
+| cname   | rating |
++---------+--------+
+| Liu     |    200 |
+| Clemens |    100 |
+| Clemens |    100 |
++---------+--------+
+3 rows in set (0.778 sec)
+
+mysql> select snum ,sum(amt) as total_orders
+    -> from orders
+    -> group by snum
+    -> having sum(amt) >
+    -> (select max(amt) from orders);
++------+--------------+
+| snum | total_orders |
++------+--------------+
+| 1001 |     15382.07 |
++------+--------------+
+1 row in set (0.536 sec)

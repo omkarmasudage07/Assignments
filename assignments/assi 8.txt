@@ -1,0 +1,162 @@
+mysql> use kharghar
+Database changed
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1990-10-03 | 2008 | 1007 |
+| 3003 |  767.19 | 1990-10-03 | 2001 | 1001 |
+| 3002 | 1900.10 | 1990-10-03 | 2007 | 1004 |
+| 3005 | 5160.45 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1990-10-03 | 2008 | 1007 |
+| 3009 | 1713.23 | 1990-10-04 | 2002 | 1003 |
+| 3007 |   75.75 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4723.00 | 1990-10-05 | 2006 | 1001 |
+| 3010 | 1309.95 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1990-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.278 sec)
+
+mysql> select * from salesperson;
+ERROR 1146 (42S02): Table 'kharghar.salesperson' doesn't exist
+mysql> select * from salespersons;
+ERROR 1146 (42S02): Table 'kharghar.salespersons' doesn't exist
+mysql> select * from salesperson;
+ERROR 1146 (42S02): Table 'kharghar.salesperson' doesn't exist
+mysql> show table
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> show tables;
++--------------------+
+| Tables_in_kharghar |
++--------------------+
+| customers          |
+| dept               |
+| emp                |
+| emp1               |
+| emp2               |
+| employee           |
+| namep              |
+| namepractice       |
+| orders             |
+| part               |
+| salespeople        |
+| sdpt               |
+| semp               |
++--------------------+
+13 rows in set (0.560 sec)
+
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| Snum | Sname   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1004 | Motika  | London    | 0.11 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
+| 1003 | Axelrod | New York  | 0.10 |
++------+---------+-----------+------+
+5 rows in set (0.081 sec)
+
+mysql> select onum , snum ,amt * .12 "commAmt" from orders;
++------+------+---------+
+| onum | snum | commAmt |
++------+------+---------+
+| 3001 | 1007 |    2.24 |
+| 3003 | 1001 |   92.06 |
+| 3002 | 1004 |  228.01 |
+| 3005 | 1002 |  619.25 |
+| 3006 | 1007 |  131.78 |
+| 3009 | 1003 |  205.59 |
+| 3007 | 1002 |    9.09 |
+| 3008 | 1001 |  566.76 |
+| 3010 | 1002 |  157.19 |
+| 3011 | 1001 | 1187.03 |
++------+------+---------+
+10 rows in set (0.085 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+------+------------+
+| Cnum | Cname    | City     | Rating | Snum | comm | Odate      |
++------+----------+----------+--------+------+------+------------+
+| 2001 | Hoffman  | London   |    100 | 1001 | 0.12 | 1990-10-03 |
+| 2002 | Giovanni | Rome     |    200 | 1003 | 0.13 | 1990-10-04 |
+| 2003 | Liu      | San Jose |    200 | 1002 | 0.12 | 1990-10-05 |
+| 2004 | Grass    | Berlin   |    300 | 1002 | 0.15 | 1990-10-06 |
+| 2006 | Clemens  | London   |    100 | 1001 | 0.12 | 1990-10-07 |
+| 2008 | Cisneros | San Jose |    300 | 1007 | 0.11 | 1990-10-08 |
+| 2007 | Pereira  | Rome     |    100 | 1004 | 0.14 | 1990-10-09 |
++------+----------+----------+--------+------+------+------------+
+7 rows in set (0.081 sec)
+
+mysql> select city , max(rating) from customers
+    -> group by city;
++----------+-------------+
+| city     | max(rating) |
++----------+-------------+
+| London   |         100 |
+| Rome     |         200 |
+| San Jose |         300 |
+| Berlin   |         300 |
++----------+-------------+
+4 rows in set (0.124 sec)
+
+mysql> select cname , cnum from customers
+    -> order by rating desc;
++----------+------+
+| cname    | cnum |
++----------+------+
+| Grass    | 2004 |
+| Cisneros | 2008 |
+| Giovanni | 2002 |
+| Liu      | 2003 |
+| Hoffman  | 2001 |
+| Clemens  | 2006 |
+| Pereira  | 2007 |
++----------+------+
+7 rows in set (0.077 sec)
+
+mysql> select cname , cnum ,rating from customers
+    -> order by rating desc;
++----------+------+--------+
+| cname    | cnum | rating |
++----------+------+--------+
+| Grass    | 2004 |    300 |
+| Cisneros | 2008 |    300 |
+| Giovanni | 2002 |    200 |
+| Liu      | 2003 |    200 |
+| Hoffman  | 2001 |    100 |
+| Clemens  | 2006 |    100 |
+| Pereira  | 2007 |    100 |
++----------+------+--------+
+7 rows in set (0.005 sec)
+
+mysql> select odate , snm(amt)
+    -> from orders
+    -> group by odates
+    -> order by sum(amt) desc;
+ERROR 1305 (42000): FUNCTION kharghar.snm does not exist
+mysql> select odate , sum(amt)
+    -> from orders
+    -> group by odates
+    -> order by sum(amt) desc;
+ERROR 1054 (42S22): Unknown column 'odates' in 'group statement'
+mysql> select odate , snm(amt)
+    -> from orders
+    -> group by odates
+    -> ^C
+mysql> select odate , sum(amt)
+    -> from orders
+    -> group by odate
+    -> order by sum(amt) desc;
++------------+----------+
+| odate      | sum(amt) |
++------------+----------+
+| 1990-10-06 | 11201.83 |
+| 1990-10-03 |  8944.59 |
+| 1990-10-05 |  4723.00 |
+| 1990-10-04 |  1788.98 |
++------------+----------+
+4 rows in set (0.090 sec)
+
+mysql>
