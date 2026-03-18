@@ -1,0 +1,25 @@
+ 1.
+select c.* from  customers c
+    -> join salespeople s on c.snum = s.snum
+    -> where rating >= any
+    -> (
+    -> select rating from customers
+    -> where sname = 'serres');
+2.
+ select * from salespeople s
+    -> where s.city != all(
+    -> select c.city from customers c
+    -> where c.snum = s.snum);
+3. 
+select * from salespeople s
+    -> where s.city != all(
+    -> select c.city from customers c
+    -> where c.snum = s.snum);
+4.
+> select * from orders
+    -> where amt>
+    -> (select min(amt)
+    -> from orders where
+    -> cnum in (
+    -> select cnum from customers
+    -> where city = 'london'));
